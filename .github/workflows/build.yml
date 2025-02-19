@@ -1,0 +1,38 @@
+name: Build da Aplicação
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Configurar cache do Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Construir Aplicação
+        run: mvn clean package -DskipTests
+
+      - name: Salvar Artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: app.jar
+          path: target/*.jar
