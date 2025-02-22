@@ -15,3 +15,23 @@ jobs:
   step_2:
     needs: step_1
     uses: ./.github/workflows/test.yml
+
+  step_3:
+    needs: step_2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Postar comentário no PR
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { context } = require('@actions/github');
+            const status = context.workflow_run.conclusion;
+            const comment = status === 'success' 
+              ? '✅ Os testes passaram com sucesso!' 
+              : '❌ Os testes falharam.';
+            await github.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body: comment
+            });
