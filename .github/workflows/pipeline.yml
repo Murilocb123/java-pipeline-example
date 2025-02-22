@@ -9,9 +9,9 @@ on:
       - main
 
 jobs:
-  build:
+  step_1:
     uses: ./.github/workflows/build.yml
 
-  test:
-    needs: build
+  step_2:
+    needs: step_1
     uses: ./.github/workflows/test.yml
