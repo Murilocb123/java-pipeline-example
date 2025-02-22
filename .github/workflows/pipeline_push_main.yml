@@ -1,0 +1,13 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  step_1:
+    uses: ./.github/workflows/build.yml
+
+  step_2:
+    needs: step_1
+    uses: ./.github/workflows/test.yml
