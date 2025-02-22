@@ -13,7 +13,7 @@ jobs:
     needs: step_1
     uses: ./.github/workflows/test.yml
 
-  step_3:
+  comment-pr:
     needs: step_2
     runs-on: ubuntu-latest
     steps:
@@ -21,14 +21,25 @@ jobs:
         if: always()
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { context } = require('@actions/github');
+            const { context, github } = require('@actions/github');
             const status = context.workflow_run.conclusion;
+            const prNumber = context.payload.pull_request ? context.payload.pull_request.number : null;
+
+            if (!prNumber) {
+              console.log('Pull request number not found.');
+              return;
+            }
+
             const comment = status === 'success' 
               ? '✅ Os testes passaram com sucesso!' 
               : '❌ Os testes falharam.';
+
+            console.log(`Posting comment to PR #${prNumber}: ${comment}`);
+
             await github.issues.createComment({
               ...context.repo,
-              issue_number: context.payload.pull_request.number,
+              issue_number: prNumber,
               body: comment
             });
