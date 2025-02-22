@@ -13,7 +13,7 @@ jobs:
     needs: step_1
     uses: ./.github/workflows/test.yml
 
-  step_3:
+  comment-pr:
     needs: step_2
     runs-on: ubuntu-latest
     steps:
