@@ -7,17 +7,19 @@ on:
 
 jobs:
   step_1:
+    name: Build da Aplicação
     uses: ./.github/workflows/build.yml
 
   step_2:
+    name: Testes Unitários
     needs: step_1
     uses: ./.github/workflows/test.yml
 
-  comment-pr:
+  step_3:
+    name: Comentar PR
     permissions: write-all
     needs: step_2
     runs-on: ubuntu-latest
-    name: Comment PR
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -26,9 +28,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            Olá! Obrigado por abrir este PR. 
-            O build e os testes foram executados com
-            sucesso.
+            Analise o PR com carinho ❤😁
           reactions: eyes, rocket
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       
