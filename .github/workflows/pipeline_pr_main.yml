@@ -14,21 +14,21 @@ jobs:
     uses: ./.github/workflows/test.yml
 
   comment-pr:
+    permissions: write-all
     needs: step_2
     runs-on: ubuntu-latest
+    name: Comment PR
     steps:
-      - name: Postar comentário no PR
-        if: always()
-        uses: actions/github-script@v6
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Comentar PR
+        uses: unsplash/comment-on-pr@v1
         with:
-          script: |
-            const { context } = require('@actions/github');
-            const status = context.workflow_run.conclusion;
-            const comment = status === 'success' 
-              ? '✅ Os testes passaram com sucesso!' 
-              : '❌ Os testes falharam.';
-            await github.issues.createComment({
-              ...context.repo,
-              issue_number: context.payload.pull_request.number,
-              body: comment
-            });
+          message: |
+            Olá! Obrigado por abrir este PR. 
+            O build e os testes foram executados com
+            sucesso.
+          reactions: eyes, rocket
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      
